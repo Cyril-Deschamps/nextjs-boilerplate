@@ -1,0 +1,99 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - development
+      - production
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | tr a-z A-Z)"
+        id: extract_branch
+
+      # DEVELOPMENT
+      - name: Add .env variable based on branch development
+        if: ${{ steps.extract_branch.outputs.branch == 'DEVELOPMENT' }}
+        run: |
+          echo "REACT_APP_API_HOST=${{ secrets.DEVELOPMENT_REACT_APP_API_HOST }}" >> .env
+          echo "REACT_APP_API_HOST_WEBSOCKET=${{ secrets.DEVELOPMENT_REACT_APP_API_HOST_WEBSOCKET }}" >> .env
+
+      # PRODUCTION
+      - name: Add .env variable based on branch production
+        if: ${{ steps.extract_branch.outputs.branch == 'PRODUCTION' }}
+        run: |
+          echo "REACT_APP_API_HOST=${{ secrets.PRODUCTION_REACT_APP_API_HOST }}" >> .env
+          echo "REACT_APP_API_HOST_WEBSOCKET=${{ secrets.PRODUCTION_REACT_APP_API_HOST_WEBSOCKET }}" >> .env
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14.x"
+          cache: "yarn"
+
+      - uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: install
+
+      - uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: build:production
+
+      # DEVELOPMENT
+      - name: Copy repository contents via scp DEVELOPMENT
+        if: ${{ steps.extract_branch.outputs.branch == 'DEVELOPMENT' }}
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.DEVELOPMENT_HOST }}
+          USERNAME: ${{ secrets.DEVELOPMENT_USERNAME }}
+          PORT: ${{ secrets.DEVELOPMENT_PORT }}
+          KEY: ${{ secrets.DEVELOPMENT_SSHKEY }}
+        with:
+          source: "."
+          target: "/home/cyril/dev-orgatrips"
+
+      - name: Executing remote command DEVELOPMENT
+        if: ${{ steps.extract_branch.outputs.branch == 'DEVELOPMENT' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOST }}
+          USERNAME: ${{ secrets.DEVELOPMENT_USERNAME }}
+          PORT: ${{ secrets.DEVELOPMENT_PORT }}
+          KEY: ${{ secrets.DEVELOPMENT_SSHKEY }}
+          script: |
+            docker ps -q --filter "name=dev-orgatrips-front" | grep -q . && docker stop dev-orgatrips-front && docker container rm dev-orgatrips-front
+            docker build -t dev-orgatrips-front /home/cyril/cyrildeschamps/
+            docker run -d --network reverse-proxy --ip 172.18.0.5 --name dev-orgatrips-front -t dev-orgatrips-front
+
+      # PRODUCTION
+      - name: Copy repository contents via scp PRODUCTION
+        if: ${{ steps.extract_branch.outputs.branch == 'PRODUCTION' }}
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.PRODUCTION_HOST }}
+          USERNAME: ${{ secrets.PRODUCTION_USERNAME }}
+          PORT: ${{ secrets.PRODUCTION_PORT }}
+          KEY: ${{ secrets.PRODUCTION_SSHKEY }}
+        with:
+          source: "."
+          target: "/home/cyril/orgatrips-front"
+
+      - name: Executing remote command PRODUCTION
+        if: ${{ steps.extract_branch.outputs.branch == 'PRODUCTION' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          USERNAME: ${{ secrets.PRODUCTION_USERNAME }}
+          PORT: ${{ secrets.PRODUCTION_PORT }}
+          KEY: ${{ secrets.PRODUCTION_SSHKEY }}
+          script: |
+            docker ps -q --filter "name=orgatrips-front" | grep -q . && docker stop orgatrips-front && docker container rm orgatrips-front
+            docker build -t orgatrips-front /home/cyril/orgatrips-front
+            docker run -d --network reverse-proxy --ip 172.18.0.7 --name orgatrips-front -t orgatrips-front
