@@ -6,10 +6,10 @@
     "build": "node fixWithTranslateRouteLib.js && next build",
     "postbuild": "next-sitemap",
     "start": "next dev",
-    "lint-check:react": "cross-env NODE_ENV=production && eslint *.js src --ext .ts,.tsx,.js --no-fix --max-warnings=0",
+    "lint-check:react": "cross-env NODE_ENV=production && eslint \"*.js\" src --ext .ts,.tsx,.js --no-fix --max-warnings=0",
     "lint-check:typing": "tsc --noEmit",
     "lint-check:prettier": "prettier --check src",
-    "lint-fix:react": "cross-env NODE_ENV=production && eslint *.js src --ext .ts,.tsx,.js --max-warnings=0 --fix",
+    "lint-fix:react": "cross-env NODE_ENV=production && eslint \"*.js\" src --ext .ts,.tsx,.js --max-warnings=0 --fix",
     "lint-fix:prettier": "prettier --write src"
   },
   "browserslist": {
