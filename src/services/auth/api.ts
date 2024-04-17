@@ -38,6 +38,9 @@ export function getObjectURL(url: string): Promise<ObjectURL> {
       responseType: "blob",
     })
     .then((res) => {
+      if (!res.headers["content-type"] || !res.headers["content-disposition"]) {
+        throw new Error("Missing content-type or content-disposition header");
+      }
       return {
         url: window.URL.createObjectURL(
           new Blob([res.data], { type: res.headers["content-type"] }),
