@@ -26,7 +26,7 @@ const Home = (): JSX.Element => {
             "@type": "Organization",
             "@id": `${hostBaseURL}/#organization`,
             url: hostBaseURL,
-            name: "TODO_CHANGE_PROJECTNAME",
+            name: "todochangeprojectname",
             logo: `${hostBaseURL}/assets/logo.png`,
           })}
         />
