@@ -69,7 +69,7 @@
     "react-toast-notifications": "^2.5.1",
     "sass": "^1.62.1",
     "schema-dts": "^1.1.2",
-    "sharp": "^0.31.3",
+    "sharp": "^0.32.6",
     "suneditor": "^2.44.12",
     "suneditor-react": "^3.5.0",
     "ulog": "^2.0.0-beta.19",
