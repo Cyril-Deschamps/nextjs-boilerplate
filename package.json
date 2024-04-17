@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "prepare": "husky install",
-    "build": "next build",
+    "build": "node fixWithTranslateRouteLib.js && next build",
     "postbuild": "next-sitemap",
     "start": "next dev",
     "lint-check:react": "cross-env NODE_ENV=production && eslint *.js src --ext .ts,.tsx,.js --no-fix --max-warnings=0",
@@ -54,7 +54,7 @@
     "next": "13",
     "next-i18next": "^13.1.5",
     "next-sitemap": "^4.0.2",
-    "next-translate-routes": "^1.9.2",
+    "next-translate-routes": "^1.10.2",
     "nextjs-google-analytics": "^2.3.3",
     "path-to-regexp": "^6.2.1",
     "query-string": "^8.1.0",
