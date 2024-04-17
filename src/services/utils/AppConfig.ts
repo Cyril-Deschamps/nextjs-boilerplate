@@ -1,4 +1,4 @@
 export const AppConfig = {
-  siteName: "TODO_CHANGE_PROJECTNAME",
+  siteName: "todochangeprojectname",
   author: "It's me Franklin",
 };

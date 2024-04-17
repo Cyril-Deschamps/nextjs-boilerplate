@@ -29,7 +29,7 @@
 ## Features
 
 - **Execution environment :** Node 16 with ESM and Yarn
-- **Framework :** [NextJS](https://nextjs.org/docs)
+- **Framework :** [NextJS](https://nextjs.org/docs) with SSR (Server Side Rendering)
 - **Language (COMPILE) :** [TypeScript 4.1](https://www.typescriptlang.org/)
 - **CSS :** [TailwindCSS](https://tailwindcss.com/docs) with SCSS
 - **Query manager :** [React Query](https://react-query.tanstack.com/)
@@ -53,6 +53,8 @@ mv nextjs-boilerplate your-project-name
 cd your-project-name
 yarn install
 ```
+
+Replace all the "todochangeprojectname" with your project name.
 
 ### Available Scripts
 
