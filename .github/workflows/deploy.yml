@@ -7,10 +7,10 @@ on:
       - production
 
 env:
-  DOCKER_PROJECT_NAME_DEV: dev-TODO_CHANGE_PROJECTNAME
-  PROJECT_PATH_DEV: ${{ secrets.DEVELOPMENT_DOCKER_IMAGES_PATH }}/dev-TODO_CHANGE_PROJECTNAME
-  DOCKER_PROJECT_NAME_PROD: TODO_CHANGE_PROJECTNAME
-  PROJECT_PATH_PROD: ${{ secrets.PRODUCTION_DOCKER_IMAGES_PATH }}/TODO_CHANGE_PROJECTNAME
+  DOCKER_PROJECT_NAME_DEV: dev-todochangeprojectname
+  PROJECT_PATH_DEV: ${{ secrets.DEVELOPMENT_DOCKER_IMAGES_PATH }}/dev-todochangeprojectname
+  DOCKER_PROJECT_NAME_PROD: todochangeprojectname
+  PROJECT_PATH_PROD: ${{ secrets.PRODUCTION_DOCKER_IMAGES_PATH }}/todochangeprojectname
 
 jobs:
   linter:
@@ -91,7 +91,7 @@ jobs:
             docker stop $DOCKER_PROJECT_NAME_DEV || true
             docker container rm $DOCKER_PROJECT_NAME_DEV || true
             docker build -t $DOCKER_PROJECT_NAME_DEV $PROJECT_PATH_DEV
-            docker run -d --network reverse-proxy --name $DOCKER_PROJECT_NAME_DEV --ip ${{ secrets.DEVELOPMENT_DOCKER_LOCAL_IP }} -t $DOCKER_PROJECT_NAME_DEV
+            docker run -d --network reverse-proxy --restart unless-stopped --name $DOCKER_PROJECT_NAME_DEV --ip ${{ secrets.DEVELOPMENT_DOCKER_LOCAL_IP }} -t $DOCKER_PROJECT_NAME_DEV
 
       # PRODUCTION
       - name: Copy repository contents via scp PRODUCTION
@@ -120,4 +120,4 @@ jobs:
             docker stop $DOCKER_PROJECT_NAME_PROD || true
             docker container rm $DOCKER_PROJECT_NAME_PROD || true
             docker build -t $DOCKER_PROJECT_NAME_PROD $PROJECT_PATH_PROD
-            docker run -d --network reverse-proxy --name $DOCKER_PROJECT_NAME_PROD --ip ${{ secrets.PRODUCTION_DOCKER_LOCAL_IP }} -t $DOCKER_PROJECT_NAME_PROD
+            docker run -d --network reverse-proxy --restart unless-stopped --name $DOCKER_PROJECT_NAME_PROD --ip ${{ secrets.PRODUCTION_DOCKER_LOCAL_IP }} -t $DOCKER_PROJECT_NAME_PROD

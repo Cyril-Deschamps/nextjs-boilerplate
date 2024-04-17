@@ -92,7 +92,7 @@ const BaseSeo = ({
                 ? fileUrlToUrl({ pathname, query }, locale!)
                 : completePathname
             }`,
-            name: "TODO_CHANGE_PROJECTNAME",
+            name: "todochangeprojectname",
           })}
         />
         {children}
