@@ -1,0 +1,37 @@
+{
+  "invalid_field": "Le champ {{label}} est invalide",
+  "required": "Le champ {{label}} est requis",
+  "one_of": "Le champ {{label}} est requis",
+  "defined": "Le champ {{label}} est requis",
+  "matches": "Le champ {{label}} n'est pas conforme",
+  "number": "Le champ {{label}} doit être un nombre valide",
+  "positive": "Le champ {{label}} doit être une valeur positive",
+  "max": "Le champ {{label}} doit être au maximum de {{max}}€",
+  "string": {
+    "min": "Le champ {{label}} doit faire au minimum {{min}} caractères",
+    "max": "Le champ {{label}} doit faire au maximum {{max}} caractères"
+  },
+  "user": {
+    "password": {
+      "matches": "Le mot de passe doit contenir 8 caractères min. dont au moins une lettre majuscule, une lettre minuscule et un chiffre.",
+      "equals": "Les mots de passe ne correspondent pas.",
+      "required": "Le mot de passe est requis"
+    },
+    "email": {
+      "invalid": "Veuillez renseigner une adresse e-mail valide",
+      "required": "L'adresse e-mail est requise"
+    },
+    "phoneNumber": {
+      "matches": "Le numéro de téléphone doit être au format international (0XXXXXXXXX)"
+    }
+  },
+  "date": {
+    "START_BEFORE_END": "Le champs {{label}} doit être avant {{endLabel}}",
+    "END_AFTER_START": "Le champs {{label}} doit être après {{startLabel}}",
+    "GENERIC_MIN": "Le champ {{label}} est avant sa date minimum",
+    "GENERIC_MAX": "Le champ {{label}} est après sa date maximum"
+  },
+  "array": {
+    "min": "Le champ {{label}} en exige au minimum {{min}}"
+  }
+}

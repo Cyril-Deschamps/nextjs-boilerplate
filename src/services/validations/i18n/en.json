@@ -1,0 +1,37 @@
+{
+  "invalid_field": "The field {{label}} is invalid",
+  "required": "The field {{label}} is required",
+  "one_of": "The field {{label}} is required",
+  "defined": "The field {{label}} is required",
+  "matches": "The field {{label}} is not compliant",
+  "number": "The field {{label}} must be a valid number",
+  "positive": "The field {{label}} must be a positive value",
+  "max": "The field {{label}} must be a maximum of {{max}}",
+  "string": {
+    "min": "The field {{label}} must be a minimum of {{min}} characters",
+    "max": "The field {{label}} must be a maximum of {{max}} characters"
+  },
+  "user": {
+    "password": {
+      "matches": "The password must contain 8 min. characters including at least one uppercase letter, one lowercase letter and one number.",
+      "equals": "The passwords don’t match.",
+      "required": "Password is required"
+    },
+    "email": {
+      "invalid": "Please enter a valid e-mail address",
+      "required": "E-mail is required"
+    },
+    "phoneNumber": {
+      "matches": "Phone number must be in international format (0XXXXXXXXX)"
+    }
+  },
+  "date": {
+    "START_BEFORE_END": "The field {{label}} must be before {{endLabel}}",
+    "END_AFTER_START": "The field {{label}} must be after {{startLabel}}",
+    "GENERIC_MIN": "The field {{label}} is before its minimum date",
+    "GENERIC_MAX": "The field {{label}} is after its maximum date"
+  },
+  "array": {
+    "min": "The field {{label}} requires at least {{min}}"
+  }
+}

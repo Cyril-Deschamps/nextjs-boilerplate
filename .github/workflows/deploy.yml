@@ -1,0 +1,123 @@
+name: Linter and Deploy
+
+on:
+  push:
+    branches:
+      # - development
+      - production
+
+env:
+  DOCKER_PROJECT_NAME_DEV: dev-TODO_CHANGE_PROJECTNAME
+  PROJECT_PATH_DEV: ${{ secrets.DEVELOPMENT_DOCKER_IMAGES_PATH }}/dev-TODO_CHANGE_PROJECTNAME
+  DOCKER_PROJECT_NAME_PROD: TODO_CHANGE_PROJECTNAME
+  PROJECT_PATH_PROD: ${{ secrets.PRODUCTION_DOCKER_IMAGES_PATH }}/TODO_CHANGE_PROJECTNAME
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install dependencies
+        run: yarn run npm-run-all lint-check:*
+
+  build:
+    needs: linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr a-z A-Z)" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Add .env variable
+        run: |
+          touch .env
+          echo "REACT_APP_BOOKING_AFFILIATE_ID=${{ secrets.REACT_APP_BOOKING_AFFILIATE_ID }}" >> .env
+
+      # DEVELOPMENT
+      - name: Add .env variable based on branch development
+        if: ${{ steps.extract_branch.outputs.branch == 'DEVELOPMENT' }}
+        run: |
+          echo "REACT_APP_API_HOST=${{ secrets.DEVELOPMENT_REACT_APP_API_HOST }}" >> .env
+          echo "REACT_APP_HOST=${{ secrets.DEVELOPMENT_REACT_APP_HOST }}" >> .env
+          echo "REACT_APP_GA_MEASUREMENT_ID=${{ secrets.DEVELOPMENT_REACT_APP_GA_MEASUREMENT_ID }}" >> .env
+          echo "REACT_APP_WEBHOOK_SECRET=${{ secrets.DEVELOPMENT_REACT_APP_WEBHOOK_SECRET }}" >> .env
+
+      # PRODUCTION
+      - name: Add .env variable based on branch production
+        if: ${{ steps.extract_branch.outputs.branch == 'PRODUCTION' }}
+        run: |
+          echo "REACT_APP_API_HOST=${{ secrets.PRODUCTION_REACT_APP_API_HOST }}" >> .env
+          echo "REACT_APP_HOST=${{ secrets.PRODUCTION_REACT_APP_HOST }}" >> .env
+          echo "REACT_APP_GA_MEASUREMENT_ID=${{ secrets.PRODUCTION_REACT_APP_GA_MEASUREMENT_ID }}" >> .env
+          echo "REACT_APP_WEBHOOK_SECRET=${{ secrets.PRODUCTION_REACT_APP_WEBHOOK_SECRET }}" >> .env
+
+      # DEVELOPMENT
+      - name: Copy repository contents via scp DEVELOPMENT
+        if: ${{ steps.extract_branch.outputs.branch == 'DEVELOPMENT' }}
+        uses: appleboy/scp-action@master
+        with:
+          HOST: ${{ secrets.DEVELOPMENT_HOST }}
+          USERNAME: ${{ secrets.DEVELOPMENT_USERNAME }}
+          PORT: ${{ secrets.DEVELOPMENT_PORT }}
+          KEY: ${{ secrets.DEVELOPMENT_SSHKEY }}
+          source: "."
+          target: ${{ env.PROJECT_PATH_DEV }}
+
+      - name: Build and start docker container DEVELOPMENT
+        if: ${{ steps.extract_branch.outputs.branch == 'DEVELOPMENT' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEVELOPMENT_HOST }}
+          USERNAME: ${{ secrets.DEVELOPMENT_USERNAME }}
+          PORT: ${{ secrets.DEVELOPMENT_PORT }}
+          KEY: ${{ secrets.DEVELOPMENT_SSHKEY }}
+          envs: PROJECT_PATH_DEV,DOCKER_PROJECT_NAME_DEV
+          script: |
+            cd $PROJECT_PATH_DEV
+            git clean -df
+            docker stop $DOCKER_PROJECT_NAME_DEV || true
+            docker container rm $DOCKER_PROJECT_NAME_DEV || true
+            docker build -t $DOCKER_PROJECT_NAME_DEV $PROJECT_PATH_DEV
+            docker run -d --network reverse-proxy --name $DOCKER_PROJECT_NAME_DEV --ip ${{ secrets.DEVELOPMENT_DOCKER_LOCAL_IP }} -t $DOCKER_PROJECT_NAME_DEV
+
+      # PRODUCTION
+      - name: Copy repository contents via scp PRODUCTION
+        if: ${{ steps.extract_branch.outputs.branch == 'PRODUCTION' }}
+        uses: appleboy/scp-action@master
+        with:
+          HOST: ${{ secrets.PRODUCTION_HOST }}
+          USERNAME: ${{ secrets.PRODUCTION_USERNAME }}
+          PORT: ${{ secrets.PRODUCTION_PORT }}
+          KEY: ${{ secrets.PRODUCTION_SSHKEY }}
+          source: "."
+          target: ${{ env.PROJECT_PATH_PROD }}
+
+      - name: Build and start docker container PRODUCTION
+        if: ${{ steps.extract_branch.outputs.branch == 'PRODUCTION' }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          USERNAME: ${{ secrets.PRODUCTION_USERNAME }}
+          PORT: ${{ secrets.PRODUCTION_PORT }}
+          KEY: ${{ secrets.PRODUCTION_SSHKEY }}
+          envs: PROJECT_PATH_PROD,DOCKER_PROJECT_NAME_PROD
+          script: |
+            cd $PROJECT_PATH_PROD
+            git clean -df
+            docker stop $DOCKER_PROJECT_NAME_PROD || true
+            docker container rm $DOCKER_PROJECT_NAME_PROD || true
+            docker build -t $DOCKER_PROJECT_NAME_PROD $PROJECT_PATH_PROD
+            docker run -d --network reverse-proxy --name $DOCKER_PROJECT_NAME_PROD --ip ${{ secrets.PRODUCTION_DOCKER_LOCAL_IP }} -t $DOCKER_PROJECT_NAME_PROD

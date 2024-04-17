@@ -1,0 +1,24 @@
+{
+  "departure_city": "Departure airport",
+  "departure_city_placeholder": "Where are you going ?",
+  "date_range": "Travel dates",
+  "date_range_start": "Departure date",
+  "date_range_end": "Return date",
+  "date_range_placeholder": "Check-in date — Check-out date",
+  "select_dates_info": "Please select a <strong>departure</strong> date and then a <strong>return</strong> date.",
+  "number_of_adults": "Adults",
+  "number_of_children": "Children",
+  "travelers_number_info": "Note: Up to 9 travelers (adults & children) allowed.",
+  "budget_max": "Maximum budget",
+  "find_trips": "Find destinations",
+  "search_trips_loading": "We are looking for the best trips for you ...",
+  "search_trips": {
+    "AIRPORT_NOT_COMPATIBLE": "The selected airport is not compatible, please select another one.",
+    "ERROR": "An error occurred while searching for destinations. Please try again later."
+  },
+  "AIRPORT_TYPES": {
+    "SMALL_AIRPORT": "Little airport",
+    "MEDIUM_AIRPORT": "Secondary airport",
+    "LARGE_AIRPORT": "Main airport"
+  }
+}

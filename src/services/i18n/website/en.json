@@ -1,0 +1,11 @@
+{
+  "pages": {
+    "home": "Home",
+    "contact": "Contact us",
+    "legal_notice": "Legal notice",
+    "privacy_policy": "Privacy policy"
+  },
+  "footer": {
+    "all_rights_reserved": "All rights reserved"
+  }
+}
